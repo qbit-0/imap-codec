@@ -716,7 +716,7 @@ impl EncodeIntoContext for CommandBody<'_> {
             }
             #[cfg(feature = "ext_acl")]
             CommandBody::SetAcl => {
-                ctx.write_all(b"SETACL ")?;
+                ctx.write_all(b"SETACL ")
             }
         }
     }

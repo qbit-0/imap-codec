@@ -426,7 +426,7 @@ pub(crate) fn namespace(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// listrights = "LISTRIGHTS" SP mailbox SP identifier
 /// ```
 #[cfg(feature = "ext_acl")]
-pub(crate) fn list_rights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+pub(crate) fn listrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
     let parser = tag_no_case(b"LISTRIGHTS");
 
     let (remaining, _) = parser(input)?;
@@ -440,7 +440,7 @@ pub(crate) fn list_rights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// myrights = "MYRIGHTS" SP mailbox
 /// ```
 #[cfg(feature = "ext_acl")]
-pub(crate) fn my_rights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+pub(crate) fn myrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
     let parser = tag_no_case(b"MYRIGHTS");
 
     let (remaining, _) = parser(input)?;
@@ -454,12 +454,12 @@ pub(crate) fn my_rights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// setacl = "SETACL" SP mailbox SP identifier SP mod-rights
 /// ```
 #[cfg(feature = "ext_acl")]
-pub(crate) fn set_acl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+pub(crate) fn setacl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
     let parser = tag_no_case(b"SETACL");
 
     let (remaining, _) = parser(input)?;
 
-    Ok((remaining, CommandBody::SetACL))
+    Ok((remaining, CommandBody::SetAcl))
 }
 
 /// `status = "STATUS" SP mailbox SP "(" status-att *(SP status-att) ")"`
