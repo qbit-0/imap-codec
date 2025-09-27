@@ -1,7 +1,6 @@
 //! The IMAP NAMESPACE Extension
 
 use imap_types::{
-    core::{AString, Quoted},
     extensions::namespace::{Namespace, NamespaceResponseExtension, Namespaces},
     response::Data,
 };
@@ -15,7 +14,7 @@ use nom::{
 use std::io::Write;
 
 use crate::{
-    core::{astring, quoted, quoted_char, string},
+    core::{astring, quoted_char},
     decode::IMAPResult,
     encode::{EncodeContext, EncodeIntoContext},
 };
@@ -68,7 +67,7 @@ fn namespace(input: &[u8]) -> IMAPResult<&[u8], Namespace> {
         delimited(
             tag("("),
             tuple((
-                string,
+                astring,
                 tag(" "),
                 delimiter_parser,
                 many0(namespace_response_extension),
@@ -93,9 +92,9 @@ fn namespace_response_extension(input: &[u8]) -> IMAPResult<&[u8], NamespaceResp
         preceded(
             tag(" "),
             tuple((
-                string,
+                astring,
                 tag(" "),
-                delimited(tag("("), many0(preceded(tag(" "), string)), tag(")")),
+                delimited(tag("("), many0(preceded(tag(" "), astring)), tag(")")),
             )),
         ),
         |(key, _, values)| NamespaceResponseExtension { key, values },
