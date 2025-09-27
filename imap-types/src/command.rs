@@ -1545,13 +1545,22 @@ pub enum CommandBody<'a> {
     Namespace,
 
     #[cfg(feature = "ext_acl")]
-    ListRights,
+    ListRights {
+        mailbox: Mailbox<'a>,
+        identifier: AString<'a>,
+    },
 
     #[cfg(feature = "ext_acl")]
-    MyRights,
+    MyRights {
+        mailbox: Mailbox<'a>,
+    },
 
     #[cfg(feature = "ext_acl")]
-    SetAcl,
+    SetAcl {
+        mailbox: Mailbox<'a>,
+        identifier: AString<'a>,
+        mod_rights: AString<'a>,
+    },
 }
 
 impl<'a> CommandBody<'a> {
@@ -1859,11 +1868,11 @@ impl<'a> CommandBody<'a> {
             #[cfg(feature = "ext_namespace")]
             Self::Namespace => "NAMESPACE",
             #[cfg(feature = "ext_acl")]
-            Self::ListRights => "LISTRIGHTS",
+            Self::ListRights { .. } => "LISTRIGHTS",
             #[cfg(feature = "ext_acl")]
-            Self::MyRights => "MYRIGHTS",
+            Self::MyRights { .. } => "MYRIGHTS",
             #[cfg(feature = "ext_acl")]
-            Self::SetAcl => "SETACL",
+            Self::SetAcl { .. } => "SETACL",
         }
     }
 }

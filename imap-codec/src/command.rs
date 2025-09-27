@@ -427,11 +427,18 @@ pub(crate) fn namespace(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// ```
 #[cfg(feature = "ext_acl")]
 pub(crate) fn listrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
-    let parser = tag_no_case(b"LISTRIGHTS");
+    let mut parser = tuple((
+        tag_no_case(b"LISTRIGHTS"),
+        preceded(sp, mailbox),
+        preceded(sp, astring),
+    ));
 
-    let (remaining, _) = parser(input)?;
+    let (remaining, (_, mailbox, identifier)) = parser(input)?;
 
-    Ok((remaining, CommandBody::ListRights))
+    Ok((remaining, CommandBody::ListRights {
+        mailbox,
+        identifier,
+    }))
 }
 
 /// FROM RFC 4314:
@@ -441,11 +448,11 @@ pub(crate) fn listrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// ```
 #[cfg(feature = "ext_acl")]
 pub(crate) fn myrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
-    let parser = tag_no_case(b"MYRIGHTS");
+    let mut parser = preceded(tag_no_case(b"MYRIGHTS "), mailbox);
 
-    let (remaining, _) = parser(input)?;
+    let (remaining, mailbox) = parser(input)?;
 
-    Ok((remaining, CommandBody::MyRights))
+    Ok((remaining, CommandBody::MyRights { mailbox }))
 }
 
 /// FROM RFC 4314:
@@ -455,11 +462,20 @@ pub(crate) fn myrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// ```
 #[cfg(feature = "ext_acl")]
 pub(crate) fn setacl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
-    let parser = tag_no_case(b"SETACL");
+    let mut parser = tuple((
+        tag_no_case(b"SETACL"),
+        preceded(sp, mailbox),
+        preceded(sp, astring),
+        preceded(sp, astring),
+    ));
 
-    let (remaining, _) = parser(input)?;
+    let (remaining, (_, mailbox, identifier, mod_rights)) = parser(input)?;
 
-    Ok((remaining, CommandBody::SetAcl))
+    Ok((remaining, CommandBody::SetAcl {
+        mailbox,
+        identifier,
+        mod_rights,
+    }))
 }
 
 /// `status = "STATUS" SP mailbox SP "(" status-att *(SP status-att) ")"`

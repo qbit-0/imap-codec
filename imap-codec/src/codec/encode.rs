@@ -707,15 +707,24 @@ impl EncodeIntoContext for CommandBody<'_> {
                 ctx.write_all(b"NAMESPACE")
             }
             #[cfg(feature = "ext_acl")]
-            CommandBody::ListRights => {
+            CommandBody::ListRights {
+                mailbox,
+                identifier
+            } => {
                 ctx.write_all(b"LISTRIGHTS ")
             }
             #[cfg(feature = "ext_acl")]
-            CommandBody::MyRights => {
+            CommandBody::MyRights { 
+                mailbox 
+            } => {
                 ctx.write_all(b"MYRIGHTS ")
             }
             #[cfg(feature = "ext_acl")]
-            CommandBody::SetAcl => {
+            CommandBody::SetAcl {
+                mailbox, 
+                identifier, 
+                mod_rights 
+            } => {
                 ctx.write_all(b"SETACL ")
             }
         }
