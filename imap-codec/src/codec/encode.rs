@@ -706,6 +706,18 @@ impl EncodeIntoContext for CommandBody<'_> {
             &CommandBody::Namespace => {
                 ctx.write_all(b"NAMESPACE")
             }
+            #[cfg(feature = "ext_acl")]
+            CommandBody::ListRights => {
+                ctx.write_all(b"LISTRIGHTS ")
+            }
+            #[cfg(feature = "ext_acl")]
+            CommandBody::MyRights => {
+                ctx.write_all(b"MYRIGHTS ")
+            }
+            #[cfg(feature = "ext_acl")]
+            CommandBody::SetAcl => {
+                ctx.write_all(b"SETACL ")?;
+            }
         }
     }
 }
@@ -1640,13 +1652,16 @@ impl EncodeIntoContext for Data<'_> {
                 other,
                 shared,
             } => {
-
                 ctx.write_all(b"* NAMESPACE ")?;
                 encode_namespace_list(ctx, personal)?;
                 ctx.write_all(b" ")?;
                 encode_namespace_list(ctx, other)?;
                 ctx.write_all(b" ")?;
                 encode_namespace_list(ctx, shared)?;
+            }
+            #[cfg(feature = "ext_acl")]
+            Data::Acl => {
+                ctx.write_all(b"* ACL")?;
             }
         }
 

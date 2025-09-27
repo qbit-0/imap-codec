@@ -1543,6 +1543,15 @@ pub enum CommandBody<'a> {
     /// This extension must only be used when the server advertised support for it sending the NAMESPACE capability.
     /// </div>
     Namespace,
+
+    #[cfg(feature = "ext_acl")]
+    ListRights,
+
+    #[cfg(feature = "ext_acl")]
+    MyRights,
+
+    #[cfg(feature = "ext_acl")]
+    SetAcl,
 }
 
 impl<'a> CommandBody<'a> {
@@ -1849,6 +1858,12 @@ impl<'a> CommandBody<'a> {
             Self::GetMetadata { .. } => "GETMETADATA",
             #[cfg(feature = "ext_namespace")]
             Self::Namespace => "NAMESPACE",
+            #[cfg(feature = "ext_acl")]
+            Self::ListRights => "LISTRIGHTS",
+            #[cfg(feature = "ext_acl")]
+            Self::MyRights => "MYRIGHTS",
+            #[cfg(feature = "ext_acl")]
+            Self::SetAcl => "SETACL",
         }
     }
 }

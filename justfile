@@ -58,7 +58,8 @@ cargo_hack mode: install_cargo_hack
         ext_mailbox_referrals,\
         ext_id,\
         ext_metadata,\
-        ext_namespace \
+        ext_namespace,\
+        ext_acl,\
         --group-features \
         quirk_crlf_relaxed,\
         quirk_id_empty_to_nil,\
@@ -88,7 +89,8 @@ cargo_hack mode: install_cargo_hack
         ext_mailbox_referrals,\
         ext_id,\
         ext_metadata,\
-        ext_namespace\
+        ext_namespace,\
+        ext_acl,\
         {{ mode }}
 	
 [private]

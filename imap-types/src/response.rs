@@ -599,6 +599,9 @@ pub enum Data<'a> {
         other: Vec<NamespaceDescription<'a>>,
         shared: Vec<NamespaceDescription<'a>>,
     },
+
+    #[cfg(feature = "ext_acl")]
+    Acl,
 }
 
 impl<'a> Data<'a> {
@@ -1107,6 +1110,8 @@ pub enum Capability<'a> {
     /// NAMESPACE extension (RFC 2342)
     #[cfg(feature = "ext_namespace")]
     Namespace,
+    /// ACL extension (RFC 4314)
+    Acl,
     /// Other/Unknown
     Other(CapabilityOther<'a>),
 }
@@ -1151,6 +1156,8 @@ impl Display for Capability<'_> {
             Self::QResync => write!(f, "QRESYNC"),
             #[cfg(feature = "ext_namespace")]
             Self::Namespace => write!(f, "NAMESPACE"),
+            #[cfg(feature = "ext_acl")]
+            Self::Acl => write!(f, "ACL"),
             Self::Other(other) => write!(f, "{}", other.0),
         }
     }

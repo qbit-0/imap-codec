@@ -16,3 +16,5 @@ pub mod uidplus;
 pub mod unselect;
 #[cfg(feature = "ext_namespace")]
 pub mod namespace;
+#[cfg(feature = "ext_acl")]
+pub mod acl;

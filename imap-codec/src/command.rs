@@ -170,6 +170,12 @@ pub(crate) fn command_auth(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
         getmetadata,
         #[cfg(feature = "ext_namespace")]
         namespace,
+        #[cfg(feature = "ext_acl")]
+        listrights,
+        #[cfg(feature = "ext_acl")]
+        myrights,
+        #[cfg(feature = "ext_acl")]
+        setacl,
     ))(input)
 }
 
@@ -412,6 +418,48 @@ pub(crate) fn namespace(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
     let (remaining, _) = parser(input)?;
 
     Ok((remaining, CommandBody::Namespace))
+}
+
+/// FROM RFC 4314:
+/// 
+/// ```abnf
+/// listrights = "LISTRIGHTS" SP mailbox SP identifier
+/// ```
+#[cfg(feature = "ext_acl")]
+pub(crate) fn list_rights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    let parser = tag_no_case(b"LISTRIGHTS");
+
+    let (remaining, _) = parser(input)?;
+
+    Ok((remaining, CommandBody::ListRights))
+}
+
+/// FROM RFC 4314:
+/// 
+/// ```abnf
+/// myrights = "MYRIGHTS" SP mailbox
+/// ```
+#[cfg(feature = "ext_acl")]
+pub(crate) fn my_rights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    let parser = tag_no_case(b"MYRIGHTS");
+
+    let (remaining, _) = parser(input)?;
+
+    Ok((remaining, CommandBody::MyRights))
+}
+
+/// FROM RFC 4314:
+/// 
+/// ```abnf
+/// setacl = "SETACL" SP mailbox SP identifier SP mod-rights
+/// ```
+#[cfg(feature = "ext_acl")]
+pub(crate) fn set_acl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    let parser = tag_no_case(b"SETACL");
+
+    let (remaining, _) = parser(input)?;
+
+    Ok((remaining, CommandBody::SetACL))
 }
 
 /// `status = "STATUS" SP mailbox SP "(" status-att *(SP status-att) ")"`
