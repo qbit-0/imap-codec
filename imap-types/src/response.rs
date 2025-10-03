@@ -1111,6 +1111,7 @@ pub enum Capability<'a> {
     #[cfg(feature = "ext_namespace")]
     Namespace,
     /// ACL extension (RFC 4314)
+    #[cfg(feature = "ext_acl")]
     Acl,
     /// Other/Unknown
     Other(CapabilityOther<'a>),
