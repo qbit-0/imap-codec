@@ -1556,11 +1556,22 @@ pub enum CommandBody<'a> {
     },
 
     #[cfg(feature = "ext_acl")]
+    GetAcl {
+        mailbox: Mailbox<'a>,
+    },
+
+    #[cfg(feature = "ext_acl")]
     SetAcl {
         mailbox: Mailbox<'a>,
         identifier: AString<'a>,
         mod_rights: AString<'a>,
     },
+
+    #[cfg(feature = "ext_acl")]
+    DeleteAcl {
+        mailbox: Mailbox<'a>,
+        identifier: AString<'a>,
+    }
 }
 
 impl<'a> CommandBody<'a> {
@@ -1872,7 +1883,11 @@ impl<'a> CommandBody<'a> {
             #[cfg(feature = "ext_acl")]
             Self::MyRights { .. } => "MYRIGHTS",
             #[cfg(feature = "ext_acl")]
+            Self::GetAcl { .. } => "GETACL",
+            #[cfg(feature = "ext_acl")]
             Self::SetAcl { .. } => "SETACL",
+            #[cfg(feature = "ext_acl")]
+            Self::DeleteAcl { .. } => "DELETEACL",
         }
     }
 }

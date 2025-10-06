@@ -720,12 +720,25 @@ impl EncodeIntoContext for CommandBody<'_> {
                 ctx.write_all(b"MYRIGHTS ")
             }
             #[cfg(feature = "ext_acl")]
+            CommandBody::GetAcl {
+                mailbox,
+            } => {
+                ctx.write_all(b"GETACL ")
+            }
+            #[cfg(feature = "ext_acl")]
             CommandBody::SetAcl {
                 mailbox, 
                 identifier, 
                 mod_rights 
             } => {
                 ctx.write_all(b"SETACL ")
+            }
+            #[cfg(feature = "ext_acl")]
+            CommandBody::DeleteAcl {
+                mailbox,
+                identifier,
+            } => {
+                ctx.write_all(b"DELETEACL ")
             }
         }
     }
