@@ -34,11 +34,7 @@ impl<'a> CommandBody<'a> {
     /// This extension must only be used when the server advertised support for it by sending the ACL capability.
     /// </div>
 
-    pub fn setacl(
-        mailbox: Mailbox<'a>,
-        identifier: AString<'a>,
-        mod_rights: ModRights<'a>,
-    ) -> Self {
+    pub fn setacl(mailbox: Mailbox<'a>, identifier: AString<'a>, mod_rights: AString<'a>) -> Self {
         CommandBody::SetAcl {
             mailbox,
             identifier,
@@ -77,8 +73,8 @@ impl<'a> Data<'a> {
     pub fn listrights(
         mailbox: Mailbox<'a>,
         identifier: AString<'a>,
-        required: Rights<'a>,
-        optional: Vec<Rights<'a>>,
+        required: AString<'a>,
+        optional: Vec<AString<'a>>,
     ) -> Self {
         Self::ListRights {
             mailbox,
@@ -88,7 +84,7 @@ impl<'a> Data<'a> {
         }
     }
 
-    pub fn myrights(mailbox: Mailbox<'a>, rights: Rights<'a>) -> Self {
+    pub fn myrights(mailbox: Mailbox<'a>, rights: AString<'a>) -> Self {
         Self::MyRights { mailbox, rights }
     }
 }
@@ -100,34 +96,8 @@ impl<'a> Data<'a> {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub struct AclEntry<'a> {
     pub identifier: AString<'a>,
-    pub rights: Rights<'a>,
+    pub rights: AString<'a>,
 }
-
-/// Represents how rights should be modified for a `SETACL` command.
-///
-/// This corresponds to the `mod-rights` ABNF rule in RFC 4314.
-#[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
-pub enum ModRights<'a> {
-    /// Adds the given rights to any existing rights for the identifier.
-    /// Corresponds to `+<rights>`.
-    Add(Rights<'a>),
-    /// Removes the given rights from any existing rights for the identifier.
-    /// Corresponds to `-<rights>`.
-    Remove(Rights<'a>),
-    /// Replaces any existing rights for the identifier with the given rights.
-    /// Corresponds to `<rights>`.
-    Replace(Rights<'a>),
-}
-
-/// Represents a set of ACL rights as a string.
-///
-/// Each character in the string represents a specific right.
-#[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
-pub struct Rights<'a>(pub AString<'a>);
 
 /// Error-related types.
 pub mod error {

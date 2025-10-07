@@ -1682,8 +1682,40 @@ impl EncodeIntoContext for Data<'_> {
                 encode_namespaces(ctx, shared)?;
             }
             #[cfg(feature = "ext_acl")]
-            Data::Acl => {
-                ctx.write_all(b"* ACL")?;
+            Data::Acl { mailbox, entries } => {
+                ctx.write_all(b"* ACL ")?;
+                mailbox.encode_ctx(ctx)?;
+                for entry in entries {
+                    ctx.write_all(b" ")?;
+                    entry.identifier.encode_ctx(ctx)?;
+                    ctx.write_all(b" ")?;
+                    entry.rights.encode_ctx(ctx)?;
+                }
+            }
+            #[cfg(feature = "ext_acl")]
+            Data::ListRights {
+                mailbox,
+                identifier,
+                required,
+                optional,
+            } => {
+                ctx.write_all(b"* LISTRIGHTS ")?;
+                mailbox.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                identifier.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                required.encode_ctx(ctx)?;
+                for opt_right in optional {
+                    ctx.write_all(b" ")?;
+                    opt_right.encode_ctx(ctx)?;
+                }
+            }
+            #[cfg(feature = "ext_acl")]
+            Data::MyRights { mailbox, rights } => {
+                ctx.write_all(b"* MYRIGHTS ")?;
+                mailbox.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                rights.encode_ctx(ctx)?;
             }
         }
 

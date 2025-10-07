@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "ext_id")]
 use crate::core::{IString, NString};
 #[cfg(feature = "ext_acl")]
-use crate::extensions::acl::{AclEntry, Rights};
+use crate::extensions::acl::{AclEntry};
 #[cfg(feature = "ext_metadata")]
 use crate::extensions::metadata::{MetadataCode, MetadataResponse};
 #[cfg(feature = "ext_namespace")]
@@ -612,14 +612,14 @@ pub enum Data<'a> {
     ListRights {
         mailbox: Mailbox<'a>,
         identifier: AString<'a>,
-        required: Rights<'a>,
-        optional: Vec<Rights<'a>>,
+        required: AString<'a>,
+        optional: Vec<AString<'a>>,
     },
 
     #[cfg(feature = "ext_acl")]
     MyRights {
         mailbox: Mailbox<'a>,
-        rights: Rights<'a>,
+        rights: AString<'a>,
     },
 }
 
