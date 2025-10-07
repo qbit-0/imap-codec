@@ -16,6 +16,8 @@ use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "ext_id")]
 use crate::core::{IString, NString};
+#[cfg(feature = "ext_acl")]
+use crate::extensions::acl::ModRights;
 #[cfg(feature = "ext_metadata")]
 use crate::extensions::metadata::{Entry, EntryValue, GetMetadataOption};
 use crate::{
@@ -1564,7 +1566,7 @@ pub enum CommandBody<'a> {
     SetAcl {
         mailbox: Mailbox<'a>,
         identifier: AString<'a>,
-        mod_rights: AString<'a>,
+        mod_rights: ModRights<'a>,
     },
 
     #[cfg(feature = "ext_acl")]
