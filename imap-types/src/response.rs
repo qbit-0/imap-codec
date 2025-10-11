@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "ext_id")]
 use crate::core::{IString, NString};
 #[cfg(feature = "ext_acl")]
-use crate::extensions::acl::{AclEntry};
+use crate::extensions::acl::AclEntry;
 #[cfg(feature = "ext_metadata")]
 use crate::extensions::metadata::{MetadataCode, MetadataResponse};
 #[cfg(feature = "ext_namespace")]

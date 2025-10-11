@@ -407,7 +407,7 @@ pub(crate) fn select_param(input: &[u8]) -> IMAPResult<&[u8], SelectParameter> {
 }
 
 /// FROM RFC 2342:
-/// 
+///
 /// ```abnf
 /// namespace = "NAMESPACE"
 /// ```
@@ -421,7 +421,7 @@ pub(crate) fn namespace(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 }
 
 /// FROM RFC 4314:
-/// 
+///
 /// ```abnf
 /// listrights = "LISTRIGHTS" SP mailbox SP identifier
 /// ```
@@ -435,14 +435,17 @@ pub(crate) fn listrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 
     let (remaining, (_, mailbox, identifier)) = parser(input)?;
 
-    Ok((remaining, CommandBody::ListRights {
-        mailbox,
-        identifier,
-    }))
+    Ok((
+        remaining,
+        CommandBody::ListRights {
+            mailbox,
+            identifier,
+        },
+    ))
 }
 
 /// FROM RFC 4314:
-/// 
+///
 /// ```abnf
 /// myrights = "MYRIGHTS" SP mailbox
 /// ```
@@ -456,7 +459,7 @@ pub(crate) fn myrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 }
 
 /// FROM RFC 4314:
-/// 
+///
 /// ```abnf
 /// setacl = "SETACL" SP mailbox SP identifier SP mod-rights
 /// ```
@@ -471,11 +474,14 @@ pub(crate) fn setacl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 
     let (remaining, (_, mailbox, identifier, mod_rights)) = parser(input)?;
 
-    Ok((remaining, CommandBody::SetAcl {
-        mailbox,
-        identifier,
-        mod_rights,
-    }))
+    Ok((
+        remaining,
+        CommandBody::SetAcl {
+            mailbox,
+            identifier,
+            mod_rights,
+        },
+    ))
 }
 
 /// `status = "STATUS" SP mailbox SP "(" status-att *(SP status-att) ")"`

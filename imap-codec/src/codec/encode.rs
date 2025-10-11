@@ -82,9 +82,9 @@ use imap_types::{
     utils::escape_quoted,
 };
 use utils::{List1AttributeValueOrNil, List1OrNil, join_serializable};
+
 #[cfg(feature = "ext_namespace")]
 use crate::extensions::namespace::encode_namespaces;
-
 use crate::{AuthenticateDataCodec, CommandCodec, GreetingCodec, IdleDoneCodec, ResponseCodec};
 
 /// Encoder.
@@ -703,43 +703,27 @@ impl EncodeIntoContext for CommandBody<'_> {
                 }
             }
             #[cfg(feature = "ext_namespace")]
-            &CommandBody::Namespace => {
-                ctx.write_all(b"NAMESPACE")
-            }
+            &CommandBody::Namespace => ctx.write_all(b"NAMESPACE"),
             #[cfg(feature = "ext_acl")]
             CommandBody::ListRights {
                 mailbox,
-                identifier
-            } => {
-                ctx.write_all(b"LISTRIGHTS ")
-            }
+                identifier,
+            } => ctx.write_all(b"LISTRIGHTS "),
             #[cfg(feature = "ext_acl")]
-            CommandBody::MyRights { 
-                mailbox 
-            } => {
-                ctx.write_all(b"MYRIGHTS ")
-            }
+            CommandBody::MyRights { mailbox } => ctx.write_all(b"MYRIGHTS "),
             #[cfg(feature = "ext_acl")]
-            CommandBody::GetAcl {
-                mailbox,
-            } => {
-                ctx.write_all(b"GETACL ")
-            }
+            CommandBody::GetAcl { mailbox } => ctx.write_all(b"GETACL "),
             #[cfg(feature = "ext_acl")]
             CommandBody::SetAcl {
-                mailbox, 
-                identifier, 
-                mod_rights 
-            } => {
-                ctx.write_all(b"SETACL ")
-            }
+                mailbox,
+                identifier,
+                mod_rights,
+            } => ctx.write_all(b"SETACL "),
             #[cfg(feature = "ext_acl")]
             CommandBody::DeleteAcl {
                 mailbox,
                 identifier,
-            } => {
-                ctx.write_all(b"DELETEACL ")
-            }
+            } => ctx.write_all(b"DELETEACL "),
         }
     }
 }

@@ -20,14 +20,13 @@
 //!     - [`Data::ListRights`]
 //!     - [`Data::MyRights`]
 
-use crate::core::AString;
-use crate::{command::CommandBody, mailbox::Mailbox, response::Data};
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
+use bounded_static_derive::ToStatic;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use bounded_static_derive::ToStatic;
+use crate::{command::CommandBody, core::AString, mailbox::Mailbox, response::Data};
 
 impl<'a> CommandBody<'a> {
     /// <div class="warning">
