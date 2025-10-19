@@ -60,6 +60,7 @@ cargo_hack mode: install_cargo_hack
         ext_metadata,\
         ext_namespace,\
         ext_acl,\
+        ext_utf8 \
         --group-features \
         quirk_crlf_relaxed,\
         quirk_id_empty_to_nil,\
@@ -91,6 +92,7 @@ cargo_hack mode: install_cargo_hack
         ext_metadata,\
         ext_namespace,\
         ext_acl,\
+        ext_utf8\
         {{ mode }}
 	
 [private]

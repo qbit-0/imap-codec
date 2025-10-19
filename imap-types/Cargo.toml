@@ -28,6 +28,7 @@ ext_mailbox_referrals = []
 ext_metadata = []
 ext_namespace = []
 ext_acl = []
+ext_utf8 = []
 
 [dependencies]
 arbitrary = { version = "1.4.2", optional = true, default-features = false, features = ["derive"] }

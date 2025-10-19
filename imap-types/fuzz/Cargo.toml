@@ -22,6 +22,7 @@ ext_mailbox_referrals = ["imap-types/ext_mailbox_referrals"]
 ext_metadata = ["imap-types/ext_metadata"]
 ext_namespace = ["imap-types/ext_namespace"]
 ext_acl = ["imap-types/ext_acl"]
+ext_utf8 = ["imap-types/ext_utf8"]
 # </Forward to imap-types>
 
 # Use (most) IMAP extensions.
@@ -34,6 +35,7 @@ ext = [
     "ext_metadata",
     "ext_namespace",
     "ext_acl",
+    "ext_utf8",
 ]
 # Enable `Debug`-printing during parsing. This is useful to analyze crashes.
 debug = []
