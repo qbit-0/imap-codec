@@ -23,8 +23,6 @@ use crate::extensions::acl::AclEntry;
 use crate::extensions::metadata::{MetadataCode, MetadataResponse};
 #[cfg(feature = "ext_namespace")]
 use crate::extensions::namespace::Namespaces;
-#[cfg(feature = "ext_namespace")]
-use crate::extensions::namespace::Namespaces;
 #[cfg(feature = "ext_utf8")]
 use crate::extensions::utf8::Utf8Kind;
 #[cfg(feature = "ext_condstore_qresync")]
