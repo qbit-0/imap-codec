@@ -70,6 +70,7 @@ impl<'a> Command<'a> {
 /// This enum is used to encode all the different commands.
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum CommandBody<'a> {
     // ----- Any State (see https://tools.ietf.org/html/rfc3501#section-6.1) -----
@@ -1535,7 +1536,6 @@ pub enum CommandBody<'a> {
         mailbox: Mailbox<'a>,
         entries: Vec1<Entry<'a>>,
     },
-
     #[cfg(feature = "ext_namespace")]
     /// Retrieve the namespaces available to the client.
     ///
@@ -1892,6 +1892,7 @@ impl<'a> CommandBody<'a> {
 #[cfg_attr(docsrs, doc(cfg("ext_condstore_qresync")))]
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum SelectParameter {
     CondStore,
@@ -1907,6 +1908,7 @@ pub enum SelectParameter {
 #[cfg_attr(docsrs, doc(cfg("ext_condstore_qresync")))]
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum FetchModifier {
     ChangedSince(NonZeroU64),
@@ -1917,6 +1919,7 @@ pub enum FetchModifier {
 #[cfg_attr(docsrs, doc(cfg("ext_condstore_qresync")))]
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum StoreModifier {
     UnchangedSince(u64),

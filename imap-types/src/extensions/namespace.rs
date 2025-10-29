@@ -6,9 +6,9 @@
 //!
 //!     - [`Capability::Namespace`](crate::response::Capability::Namespace)
 //!
-//! * [`CommandBody`](crate::command::CommandBody) with a new variant:
+//! * [`CommandBody`] with a new variant:
 //!
-//!     - [`CommandBody::Namespace`](crate::command::CommandBody::Namespace)
+//!     - [`CommandBody::Namespace`]
 //!
 //! * [`Data`] with a new variant:
 //!
@@ -22,17 +22,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     command::CommandBody,
-    core::{AString, QuotedChar},
+    core::{IString, QuotedChar, Vec1},
     extensions::namespace::error::NamespaceError,
     response::Data,
 };
-
-/// A list of `Namespace` definitions.
-///
-/// Corresponds to the `Namespace` rule in the ABNF, which is either `NIL`
-/// or a parenthesized list of namespace descriptions. An empty `Vec` is
-/// treated as `NIL`.
-pub type Namespaces<'a> = Vec<Namespace<'a>>;
 
 impl<'a> CommandBody<'a> {
     /// <div class="warning">
@@ -44,6 +37,7 @@ impl<'a> CommandBody<'a> {
 }
 
 impl<'a> Data<'a> {
+    #[allow(clippy::type_complexity)]
     pub fn namespace<P, O, S>(
         personal: P,
         other: O,
@@ -62,8 +56,13 @@ impl<'a> Data<'a> {
     }
 }
 
-/// A single namespace's description, containing a prefix, delimiter,
-/// and optional extensions.
+/// A list of `Namespace` definitions.
+///
+/// Corresponds to the `Namespace` rule in the ABNF, which is either `NIL`
+/// or a parenthesized list of namespace descriptions. An empty `Vec` is treated as `NIL`.
+pub type Namespaces<'a> = Vec<Namespace<'a>>;
+
+/// A single namespace's description, containing a prefix, delimiter, and optional extensions.
 ///
 /// Corresponds to the `( string SP (<"> QUOTED_CHAR <"> / nil) *(Namespace_Response_Extension) )`
 /// part of the ABNF.
@@ -71,14 +70,14 @@ impl<'a> Data<'a> {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub struct Namespace<'a> {
-    pub prefix: AString<'a>,
+    pub prefix: IString<'a>,
     pub delimiter: Option<QuotedChar>,
     /// Optional extension data for this namespace.
     pub extensions: Vec<NamespaceResponseExtension<'a>>,
 }
 
 impl<'a> Namespace<'a> {
-    pub fn new(prefix: AString<'a>, delimiter: Option<QuotedChar>) -> Self {
+    pub fn new(prefix: IString<'a>, delimiter: Option<QuotedChar>) -> Self {
         Self {
             prefix,
             delimiter,
@@ -88,14 +87,12 @@ impl<'a> Namespace<'a> {
 }
 
 /// Extension data for a namespace response.
-///
-/// Corresponds to the `Namespace_Response_Extension` rule in the ABNF.
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub struct NamespaceResponseExtension<'a> {
-    pub key: AString<'a>,
-    pub values: Vec<AString<'a>>,
+    pub key: IString<'a>,
+    pub values: Vec1<IString<'a>>,
 }
 
 /// Error-related types.

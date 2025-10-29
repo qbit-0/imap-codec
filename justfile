@@ -54,9 +54,9 @@ cargo_hack mode: install_cargo_hack
         --group-features \
         starttls,\
         ext_condstore_qresync,\
+        ext_id,\
         ext_login_referrals,\
         ext_mailbox_referrals,\
-        ext_id,\
         ext_metadata,\
         ext_namespace,\
         ext_acl,\
@@ -86,9 +86,9 @@ cargo_hack mode: install_cargo_hack
         --group-features \
         starttls,\
         ext_condstore_qresync,\
+        ext_id,\
         ext_login_referrals,\
         ext_mailbox_referrals,\
-        ext_id,\
         ext_metadata,\
         ext_namespace,\
         ext_acl,\

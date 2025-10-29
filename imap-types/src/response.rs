@@ -10,7 +10,7 @@ use std::{
 
 #[cfg(feature = "arbitrary")]
 use arbitrary::Arbitrary;
-use base64::{Engine, engine::general_purpose::STANDARD as _base64};
+use base64::{engine::general_purpose::STANDARD as _base64, Engine};
 use bounded_static_derive::ToStatic;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -23,13 +23,15 @@ use crate::extensions::acl::AclEntry;
 use crate::extensions::metadata::{MetadataCode, MetadataResponse};
 #[cfg(feature = "ext_namespace")]
 use crate::extensions::namespace::Namespaces;
+#[cfg(feature = "ext_namespace")]
+use crate::extensions::namespace::Namespaces;
 #[cfg(feature = "ext_utf8")]
 use crate::extensions::utf8::Utf8Kind;
 #[cfg(feature = "ext_condstore_qresync")]
 use crate::sequence::SequenceSet;
 use crate::{
     auth::AuthMechanism,
-    core::{AString, Atom, Charset, QuotedChar, Tag, Text, Vec1, impl_try_from},
+    core::{impl_try_from, AString, Atom, Charset, QuotedChar, Tag, Text, Vec1},
     error::ValidationError,
     extensions::{
         compress::CompressionAlgorithm,
@@ -118,6 +120,7 @@ pub enum GreetingKind {
 /// Response.
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum Response<'a> {
     /// Command continuation request responses use the token "+" instead of a
@@ -138,6 +141,7 @@ pub enum Response<'a> {
 
 /// Status response.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum Status<'a> {
     Untagged(StatusBody<'a>),
@@ -315,6 +319,7 @@ impl<'a> Status<'a> {
 /// ## 7.2 - 7.4 Server and Mailbox Status; Mailbox Size; Message Status
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum Data<'a> {
     // ## 7.2. Server Responses - Server and Mailbox Status
@@ -694,6 +699,7 @@ impl<'a> Data<'a> {
 /// space and those arguments.
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 #[doc(alias = "Continue")]
 #[doc(alias = "Continuation")]
@@ -798,6 +804,7 @@ impl<'a> CommandContinuationRequestBasic<'a> {
 /// The currently defined response codes are:
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 pub enum Code<'a> {
     /// `ALERT`
@@ -1069,6 +1076,7 @@ impl<'a> CodeOther<'a> {
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(tag = "type", content = "content"))]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, ToStatic)]
 #[non_exhaustive]
 pub enum Capability<'a> {

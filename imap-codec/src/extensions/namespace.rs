@@ -2,35 +2,47 @@
 
 use std::io::Write;
 
+use abnf_core::streaming::{dquote, sp};
 use imap_types::{
+    command::CommandBody,
+    core::Vec1,
     extensions::namespace::{Namespace, NamespaceResponseExtension, Namespaces},
     response::Data,
 };
 use nom::{
     branch::alt,
-    bytes::complete::{tag, tag_no_case},
+    bytes::streaming::tag_no_case,
+    character::streaming::char,
     combinator::{map, value},
-    multi::{many0, many1},
+    multi::{many0, many1, separated_list1},
     sequence::{delimited, preceded, tuple},
 };
 
 use crate::{
-    core::{astring, quoted_char},
+    core::{nil, quoted_char, string},
     decode::IMAPResult,
     encode::{EncodeContext, EncodeIntoContext},
 };
 
-/// Parses the full NAMESPACE data response.
-///
-/// ``` abnf
-/// Namespace_Response = "*"` SP `"NAMESPACE"` SP `Namespace` SP `Namespace` SP `Namespace`
+/// ```abnf
+/// namespace = "NAMESPACE"
+/// ```
+pub(crate) fn namespace_command(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    value(CommandBody::Namespace, tag_no_case(b"NAMESPACE"))(input)
+}
+
+/// ```abnf
+/// ;; The first Namespace is the Personal Namespace(s)
+/// ;; The second Namespace is the Other Users' Namespace(s)
+/// ;; The third Namespace is the Shared Namespace(s)
+/// Namespace-Response = "NAMESPACE" SP Namespace SP Namespace SP Namespace
 /// ```
 pub(crate) fn namespace_response(input: &[u8]) -> IMAPResult<&[u8], Data> {
     let mut parser = tuple((
         tag_no_case("NAMESPACE "),
-        namespaces,
-        preceded(tag(" "), namespaces),
-        preceded(tag(" "), namespaces),
+        namespace,
+        preceded(sp, namespace),
+        preceded(sp, namespace),
     ));
 
     let (remaining, (_, personal, other, shared)) = parser(input)?;
@@ -45,35 +57,38 @@ pub(crate) fn namespace_response(input: &[u8]) -> IMAPResult<&[u8], Data> {
     ))
 }
 
-/// Parses a list of namespaces.
-///
 /// ```abnf
-/// Namespace = nil / "(" 1*( "(" string SP  (<"> QUOTED_CHAR <"> / nil) *(Namespace_Response_Extension) ")" ) ")"
+/// Namespace = nil / "(" 1*Namespace-Descr ")"
 /// ```
-fn namespaces(input: &[u8]) -> IMAPResult<&[u8], Namespaces> {
+fn namespace(input: &[u8]) -> IMAPResult<&[u8], Namespaces> {
     alt((
-        delimited(tag("("), many1(namespace), tag(")")),
-        map(tag_no_case("NIL"), |_| Vec::new()),
+        map(nil, |_| Vec::new()),
+        delimited(char('('), many1(namespace_descr), char(')')),
     ))(input)
 }
 
-/// Parses a single namespace description.
-fn namespace(input: &[u8]) -> IMAPResult<&[u8], Namespace> {
-    let delimiter_parser = alt((
-        map(delimited(tag("\""), quoted_char, tag("\"")), Some),
-        value(None, tag_no_case("NIL")),
-    ));
-
+/// ```abnf
+/// Namespace-Descr = "("
+///                     string
+///                     SP
+///                     (DQUOTE QUOTED-CHAR DQUOTE / nil)
+///                     *(Namespace-Response-Extension)
+///                   ")"
+/// ```
+fn namespace_descr(input: &[u8]) -> IMAPResult<&[u8], Namespace> {
     map(
         delimited(
-            tag("("),
+            char('('),
             tuple((
-                astring,
-                tag(" "),
-                delimiter_parser,
+                string,
+                sp,
+                alt((
+                    map(delimited(dquote, quoted_char, dquote), Some),
+                    value(None, nil),
+                )),
                 many0(namespace_response_extension),
             )),
-            tag(")"),
+            char(')'),
         ),
         |(prefix, _, delimiter, extensions)| Namespace {
             prefix,
@@ -83,22 +98,23 @@ fn namespace(input: &[u8]) -> IMAPResult<&[u8], Namespace> {
     )(input)
 }
 
-/// Parses a namespace response extension.
-///
 /// ```abnf
-/// Namespace_Response_Extension = SP string SP "(" string *(SP string) ")"
+/// Namespace-Response-Extension = SP string SP "(" string *(SP string) ")"
 /// ```
 fn namespace_response_extension(input: &[u8]) -> IMAPResult<&[u8], NamespaceResponseExtension> {
     map(
-        preceded(
-            tag(" "),
-            tuple((
-                astring,
-                tag(" "),
-                delimited(tag("("), many0(preceded(tag(" "), astring)), tag(")")),
-            )),
-        ),
-        |(key, _, values)| NamespaceResponseExtension { key, values },
+        tuple((
+            preceded(sp, string),
+            preceded(
+                sp,
+                delimited(char('('), separated_list1(sp, string), char(')')),
+            ),
+        )),
+        |(key, values)| NamespaceResponseExtension {
+            key,
+            // We can use `unvalidated` because we know the vector has at least one element due to the `separated_list1` call above.
+            values: Vec1::unvalidated(values),
+        },
     )(input)
 }
 
@@ -110,7 +126,9 @@ impl EncodeIntoContext for Namespace<'_> {
 
         match &self.delimiter {
             Some(delimiter_char) => {
-                write!(ctx, "\"{}\"", delimiter_char.inner())?;
+                write!(ctx, "\"")?;
+                delimiter_char.encode_ctx(ctx)?;
+                write!(ctx, "\"")?;
             }
             None => {
                 ctx.write_all(b"NIL")?;
@@ -129,12 +147,14 @@ impl EncodeIntoContext for NamespaceResponseExtension<'_> {
     fn encode_ctx(&self, ctx: &mut EncodeContext) -> std::io::Result<()> {
         write!(ctx, " ")?;
         self.key.encode_ctx(ctx)?;
+
         write!(ctx, " (")?;
-        for (i, value) in self.values.iter().enumerate() {
-            if i > 0 {
+        if let Some((last, head)) = self.values.as_ref().split_last() {
+            for value in head {
+                value.encode_ctx(ctx)?;
                 write!(ctx, " ")?;
             }
-            value.encode_ctx(ctx)?;
+            last.encode_ctx(ctx)?;
         }
         write!(ctx, ")")
     }
@@ -149,5 +169,23 @@ pub fn encode_namespaces(ctx: &mut EncodeContext, list: &Namespaces<'_>) -> std:
             desc.encode_ctx(ctx)?;
         }
         ctx.write_all(b")")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::namespace_response;
+
+    #[test]
+    fn parse_namespace_response() {
+        let tests = [
+            b"NAMESPACE ((\"0\" \"\\\"\")) NIL NIL\r\n".as_ref(),
+            #[cfg(feature = "ext_utf8")]
+            b"NAMESPACE ((\"^^\x00\" \"\x07\")) NIL NIL\r\n",
+        ];
+
+        for test in tests.into_iter() {
+            namespace_response(test).unwrap();
+        }
     }
 }

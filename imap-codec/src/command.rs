@@ -38,6 +38,8 @@ use crate::extensions::condstore_qresync::mod_sequence_valzer;
 use crate::extensions::id::id;
 #[cfg(feature = "ext_metadata")]
 use crate::extensions::metadata::{getmetadata, setmetadata};
+#[cfg(feature = "ext_namespace")]
+use crate::extensions::namespace::namespace_command;
 use crate::{
     auth::auth_type,
     core::{astring, base64, literal, tag_imap},
@@ -48,8 +50,8 @@ use crate::{
         compress::compress,
         enable::enable,
         idle::idle,
-        r#move::r#move,
         quota::{getquota, getquotaroot, setquota},
+        r#move::r#move,
         sort::sort,
         thread::thread,
         uidplus::uid_expunge,
@@ -169,7 +171,7 @@ pub(crate) fn command_auth(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
         #[cfg(feature = "ext_metadata")]
         getmetadata,
         #[cfg(feature = "ext_namespace")]
-        namespace,
+        namespace_command,
         #[cfg(feature = "ext_acl")]
         listrights,
         #[cfg(feature = "ext_acl")]
@@ -896,7 +898,7 @@ mod tests {
     };
 
     use super::*;
-    use crate::{CommandCodec, encode::Encoder};
+    use crate::{encode::Encoder, CommandCodec};
 
     #[test]
     fn test_parse_fetch() {

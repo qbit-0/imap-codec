@@ -49,7 +49,7 @@
 use std::num::NonZeroU64;
 use std::{borrow::Borrow, collections::VecDeque, io::Write, num::NonZeroU32};
 
-use base64::{Engine, engine::general_purpose::STANDARD as base64};
+use base64::{engine::general_purpose::STANDARD as base64, Engine};
 use chrono::{DateTime as ChronoDateTime, FixedOffset};
 #[cfg(feature = "ext_condstore_qresync")]
 use imap_types::command::{FetchModifier, SelectParameter, StoreModifier};
@@ -81,7 +81,7 @@ use imap_types::{
     status::{StatusDataItem, StatusDataItemName},
     utils::escape_quoted,
 };
-use utils::{List1AttributeValueOrNil, List1OrNil, join_serializable};
+use utils::{join_serializable, List1AttributeValueOrNil, List1OrNil};
 
 #[cfg(feature = "ext_namespace")]
 use crate::extensions::namespace::encode_namespaces;
