@@ -144,6 +144,12 @@ pub(crate) fn command_any(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 ///                setquota /     ; RFC 9208
 ///                setmetadata /  ; RFC 5464
 ///                getmetadata    ; RFC 5464
+///                namespace /    ; RFC 2342
+///                listrights /   ; RFC 4314
+///                myrights /     ; RFC 4314
+///                setacl /       ; RFC 4314
+///                getacl /       ; RFC 4314
+///                deleteacl      ; RFC 4314
 /// ```
 ///
 /// Note: Valid only in Authenticated or Selected state
@@ -173,11 +179,7 @@ pub(crate) fn command_auth(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
         #[cfg(feature = "ext_namespace")]
         namespace_command,
         #[cfg(feature = "ext_acl")]
-        listrights,
-        #[cfg(feature = "ext_acl")]
-        myrights,
-        #[cfg(feature = "ext_acl")]
-        setacl,
+        command_auth_acl,
     ))(input)
 }
 
@@ -431,6 +433,14 @@ pub(crate) fn namespace(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 
 /// FROM RFC 4314:
 ///
+/// A helper parser that groups all ACL-related commands.
+#[cfg(feature = "ext_acl")]
+fn command_auth_acl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    alt((listrights, myrights, setacl, getacl, deleteacl))(input)
+}
+
+/// FROM RFC 4314:
+///
 /// ```abnf
 /// listrights = "LISTRIGHTS" SP mailbox SP identifier
 /// ```
@@ -470,6 +480,20 @@ pub(crate) fn myrights(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
 /// FROM RFC 4314:
 ///
 /// ```abnf
+/// getacl = "GETACL" SP mailbox
+/// ```
+#[cfg(feature = "ext_acl")]
+pub(crate) fn getacl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    let mut parser = preceded(tag_no_case(b"GETACL "), mailbox);
+
+    let (remaining, mailbox) = parser(input)?;
+
+    Ok((remaining, CommandBody::GetAcl { mailbox }))
+}
+
+/// FROM RFC 4314:
+///
+/// ```abnf
 /// setacl = "SETACL" SP mailbox SP identifier SP mod-rights
 /// ```
 #[cfg(feature = "ext_acl")]
@@ -489,6 +513,30 @@ pub(crate) fn setacl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
             mailbox,
             identifier,
             mod_rights,
+        },
+    ))
+}
+
+/// FROM RFC 4314:
+///
+/// ```abnf
+/// deleteacl = "DELETEACL" SP mailbox SP identifier
+/// ```
+#[cfg(feature = "ext_acl")]
+pub(crate) fn deleteacl(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    let mut parser = tuple((
+        tag_no_case(b"DELETEACL"),
+        preceded(sp, mailbox),
+        preceded(sp, astring),
+    ));
+
+    let (remaining, (_, mailbox, identifier)) = parser(input)?;
+
+    Ok((
+        remaining,
+        CommandBody::DeleteAcl {
+            mailbox,
+            identifier,
         },
     ))
 }

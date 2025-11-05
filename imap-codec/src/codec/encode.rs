@@ -693,22 +693,45 @@ impl EncodeIntoContext for CommandBody<'_> {
             CommandBody::ListRights {
                 mailbox,
                 identifier,
-            } => ctx.write_all(b"LISTRIGHTS "),
+            } => {
+                ctx.write_all(b"LISTRIGHTS ")?;
+                mailbox.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                identifier.encode_ctx(ctx)
+            }
             #[cfg(feature = "ext_acl")]
-            CommandBody::MyRights { mailbox } => ctx.write_all(b"MYRIGHTS "),
+            CommandBody::MyRights { mailbox } => {
+                ctx.write_all(b"MYRIGHTS ")?;
+                mailbox.encode_ctx(ctx)
+            }
             #[cfg(feature = "ext_acl")]
-            CommandBody::GetAcl { mailbox } => ctx.write_all(b"GETACL "),
+            CommandBody::GetAcl { mailbox } => {
+                ctx.write_all(b"GETACL ")?;
+                mailbox.encode_ctx(ctx)
+            }
             #[cfg(feature = "ext_acl")]
             CommandBody::SetAcl {
                 mailbox,
                 identifier,
                 mod_rights,
-            } => ctx.write_all(b"SETACL "),
+            } => {
+                ctx.write_all(b"SETACL ")?;
+                mailbox.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                identifier.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                mod_rights.encode_ctx(ctx)
+            }
             #[cfg(feature = "ext_acl")]
             CommandBody::DeleteAcl {
                 mailbox,
                 identifier,
-            } => ctx.write_all(b"DELETEACL "),
+            } => {
+                ctx.write_all(b"DELETEACL ")?;
+                mailbox.encode_ctx(ctx)?;
+                ctx.write_all(b" ")?;
+                identifier.encode_ctx(ctx)
+            }
         }
     }
 }
