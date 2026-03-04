@@ -257,11 +257,43 @@ pub(crate) fn examine(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
     ))
 }
 
-/// `list = "LIST" SP mailbox SP list-mailbox`
-pub(crate) fn list(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
-    let mut parser = tuple((tag_no_case(b"LIST "), mailbox, sp, list_mailbox));
+/// Parses parenthesized content: "(" ... ")"
+/// Used for LIST select/return options.
+fn paren_content(input: &[u8]) -> IMAPResult<&[u8], &[u8]> {
+    delimited(
+        tag(b"("),
+        nom::bytes::streaming::take_while(|b: u8| b != b')'),
+        tag(b")"),
+    )(input)
+}
 
-    let (remaining, (_, reference, _, mailbox_wildcard)) = parser(input)?;
+/// `list = "LIST" SP mailbox SP list-mailbox`
+///
+/// Extended LIST (RFC 5258/6154):
+///   list-extended = "LIST" [SP list-select-opts] SP mailbox SP list-mailbox [SP list-return-opts]
+///   list-select-opts = "(" [list-select-option *(SP list-select-option)] ")"
+///   list-return-opts = "RETURN" SP "(" [list-return-option *(SP list-return-option)] ")"
+///
+/// We parse and discard the optional select/return options for compatibility
+/// with clients (e.g. iPhone Mail) that use extended LIST with SPECIAL-USE.
+pub(crate) fn list(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
+    let mut parser = tuple((
+        tag_no_case(b"LIST"),
+        sp,
+        // Optional list-select-opts: e.g. (SPECIAL-USE) or (SUBSCRIBED)
+        opt(terminated(paren_content, sp)),
+        mailbox,
+        sp,
+        list_mailbox,
+        // Optional list-return-opts: e.g. RETURN (SPECIAL-USE)
+        opt(preceded(
+            sp,
+            preceded(tag_no_case(b"RETURN"), preceded(sp, paren_content)),
+        )),
+    ));
+
+    let (remaining, (_, _, _select_opts, reference, _, mailbox_wildcard, _return_opts)) =
+        parser(input)?;
 
     Ok((
         remaining,
