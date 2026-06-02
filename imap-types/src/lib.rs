@@ -141,12 +141,11 @@
 //! This is used, for example, to generate instances during fuzz-testing.
 //! (See, e.g., `imap-types/fuzz/fuzz_targets/to_static.rs`)
 //! When the `serde` feature is used, all types implement [Serde](https://serde.rs/)'s [Serialize](https://docs.serde.rs/serde/trait.Serialize.html) and
-//! [Deserialize](https://docs.serde.rs/serde/trait.Deserialize.html) traits. (Try running `cargo run --example serde_json`.)
+//! [Deserialize](https://docs.serde.rs/serde/trait.Deserialize.html) traits.
 //! Using `tag_generator` unlocks a `TagGenerator` to generate random tags.
 //! This may help to prevent attacks that depend on the knowledge of the next tag.
 //!
 //! [Arbitrary]: https://docs.rs/arbitrary/1.0.1/arbitrary/trait.Arbitrary.html
-//! [parse_command]: https://github.com/duesee/imap-codec/blob/main/imap-codec/examples/parse_command.rs
 //! [RFC 2088]: https://datatracker.ietf.org/doc/html/rfc2088
 //! [RFC 2177]: https://datatracker.ietf.org/doc/html/rfc2177
 //! [RFC 2193]: https://datatracker.ietf.org/doc/html/rfc2193

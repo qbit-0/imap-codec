@@ -100,8 +100,6 @@
 //! [imap-types]: https://docs.rs/imap-types/latest/imap_types
 //! [imap-types features]: https://docs.rs/imap-types/latest/imap_types/#features
 //! [IMAP4rev1]: https://tools.ietf.org/html/rfc3501
-//! [parse_command]: https://github.com/duesee/imap-codec/blob/main/examples/parse_command.rs
-
 // TODO(#660)
 #![allow(unknown_lints)]
 #![allow(mismatched_lifetime_syntaxes)]

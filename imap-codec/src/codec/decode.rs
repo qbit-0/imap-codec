@@ -7,7 +7,8 @@
 //! Without a command continuation request, a client won't send more data, and the command parser on the server would always return `LiteralFound { length: 42, .. }`.
 //! This makes real-world decoding of IMAP more elaborate.
 //!
-//! Have a look at the [parse_command](https://github.com/duesee/imap-codec/blob/main/imap-codec/examples/parse_command.rs) example to see how a real-world application could decode IMAP.
+//! Real-world decoding usually needs a two-stage parser that detects message boundaries
+//! before applying a command, greeting, or response codec.
 
 use std::{
     num::{ParseIntError, TryFromIntError},
