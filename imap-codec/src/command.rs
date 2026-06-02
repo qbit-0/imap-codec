@@ -449,20 +449,6 @@ pub(crate) fn select_param(input: &[u8]) -> IMAPResult<&[u8], SelectParameter> {
     ))(input)
 }
 
-/// FROM RFC 2342:
-///
-/// ```abnf
-/// namespace = "NAMESPACE"
-/// ```
-#[cfg(feature = "ext_namespace")]
-pub(crate) fn namespace(input: &[u8]) -> IMAPResult<&[u8], CommandBody> {
-    let parser = tag_no_case(b"NAMESPACE");
-
-    let (remaining, _) = parser(input)?;
-
-    Ok((remaining, CommandBody::Namespace))
-}
-
 /// FROM RFC 4314:
 ///
 /// A helper parser that groups all ACL-related commands.
