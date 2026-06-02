@@ -18,7 +18,7 @@ flowchart LR
 ```
 
 This library provides parsing and serialization for [IMAP4rev1].
-It is based on [`imap-types`] and a [rock-solid] and [well-documented] building block for IMAP client and server implementations in Rust.
+It is based on [`imap-types`] and is a [well-documented] building block for IMAP client and server implementations in Rust.
 The complete [formal syntax] of IMAP4rev1 and several IMAP [extensions] are implemented.
 
 If you are looking for thin protocol handling, i.e., LITERAL handling, AUTHENTICATE, and IDLE, head over to [`imap-next`].
@@ -27,7 +27,7 @@ If you are looking for thin protocol handling, i.e., LITERAL handling, AUTHENTIC
 
 * Parsing works in streaming mode. `Incomplete` is returned when there is insufficient data to make a final decision. No message will be truncated.
 * Parsing is zero-copy by default. Allocation is avoided during parsing, but all messages can explicitly be converted into more flexible owned variants.
-* Fuzzing and property-based tests exercise the library. The library is fuzz-tested never to produce a message it can't parse itself.
+* Property-based tests exercise the library so generated protocol values keep round-tripping through the codecs.
 
 ## Usage
 
@@ -55,7 +55,6 @@ This crate is dual-licensed under Apache 2.0 and MIT terms.
 [IMAP4rev1]: https://tools.ietf.org/html/rfc3501
 [`imap-types`]: https://docs.rs/imap-types/latest/imap_types/
 [`imap-next`]: https://github.com/duesee/imap-next
-[rock-solid]: https://github.com/duesee/imap-codec/tree/main/imap-codec/fuzz
 [well-documented]: https://docs.rs/imap-codec/latest/imap_codec/
 [formal syntax]: https://tools.ietf.org/html/rfc3501#section-9
 [extensions]: https://docs.rs/imap-codec/latest/imap_codec/#features

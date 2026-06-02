@@ -24,7 +24,7 @@ The config minimizes diffs and ensures a consistent style of imports.
 Sadly, some config options (still) require a nightly compiler.
 Thus, you need to use `cargo +nightly fmt`.
 
-Note: Code formatting and fuzzing should be the only routines requiring a nightly compiler.
+Note: Code formatting should be the only routine requiring a nightly compiler.
 Everything else must work on stable!
 
 ### SemVer violations
@@ -59,13 +59,6 @@ There are multiple forms of testing in `imap-codec`.
 Known-answer tests are used to ensure that a specific IMAP message is *really* parsed into an expected object.
 We usually extract examples from a specific RFC and encode our expectations as unit tests.
 To implement this test, you can use `kat_inverse_{greeting,command,response,...}`.
-
-### Fuzzing
-
-Fuzzing is used in `imap-types` and `imap-codec`.
-Fuzzing is used to test that parsing and serialization are inverses of each other (which already helped uncover a lot of bugs).
-For more information, see [imap-codec/fuzz/README.md](imap-codec/fuzz/README.md).
-The CI runs a limited number (25.000) of fuzz runs.
 
 ### Regressions & fixed bugs
 

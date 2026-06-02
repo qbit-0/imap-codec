@@ -27,8 +27,7 @@ If you are looking for parsers, and serializers, head over to [`imap-codec`].
 
 * Rust's type system is used to enforce correctness and to make the library misuse-resistant.
   It's not possible to construct a message that violates the IMAP specification.
-* Fuzzing (via [cargo fuzz]) and property-based tests are used to uncover bugs.
-  The library is fuzz-tested never to produce an invalid message.
+* Property-based tests are used to uncover bugs and keep generated protocol values valid.
 
 ## Working with imap-types
 
@@ -162,6 +161,4 @@ This crate is dual-licensed under Apache 2.0 and MIT terms.
 [IMAP4rev1]: https://datatracker.ietf.org/doc/html/rfc3501
 [extensions]: https://docs.rs/imap-codec/latest/imap_codec/#features
 [`imap-codec`]: https://docs.rs/imap-types/latest/imap_codec/
-[cargo fuzz]: https://github.com/rust-fuzz/cargo-fuzz
 [core]: https://docs.rs/imap-types/latest/imap_types/core/index.html
-

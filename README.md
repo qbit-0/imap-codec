@@ -5,7 +5,7 @@
 
 # imap-{codec,types}
 
-This workspace contains [`imap-codec`] and [`imap-types`], two [rock-solid] and [well-documented] crates to build [IMAP4rev1] clients and servers.
+This workspace contains [`imap-codec`] and [`imap-types`], two [well-documented] crates to build [IMAP4rev1] clients and servers.
 `imap-codec` provides parsing and serialization, and is based on `imap-types`.
 `imap-types` provides misuse-resistant types, constructors, and general support for IMAP implementations.
 The crates live here together, but `imap-types` is a perfectly fine standalone crate.
@@ -21,7 +21,7 @@ Let's talk on [Matrix]!
 * Messages automatically use the most efficient representation. For example, atoms are preferred over quoted strings, and quoted strings are preferred over literals. It's equally easy to manually choose a representation.
 * Parsing works in streaming mode. `Incomplete` is returned when there is insufficient data to make a final decision. No message will be truncated.
 * Parsing is zero-copy by default. Allocation is avoided during parsing, but all messages can explicitly be converted into more flexible owned variants.
-* Fuzzing and property-based tests exercise the library. The library is fuzz-tested never to produce a message it can't parse itself.
+* Property-based tests exercise the library so generated protocol values keep round-tripping through the codecs.
 
 ## Usage
 
@@ -187,7 +187,7 @@ Generally, `imap-codec` has a more extensive API surface than `imap-proto` and c
 In return, it guarantees that you always construct valid messages and aims to make IMAP usable even for people with less IMAP experience.
 For example, `imap-codec` has [build-in support for IMAP literals] and ensures to always use [a correct representation for strings].
 
-`imap-codec` has a high test coverage and is fuzz-tested to ensure properties such as invertibility, misuse-resistance, etc.
+`imap-codec` has a high test coverage and property-based tests for properties such as invertibility and misuse-resistance.
 You should be unable to crash the library or generate messages that can't be parsed.
 However, "interoperability can not be tested in a vacuum" [^1].
 `imap-proto` already succeeded in production as it is (transitively) used in [`imap`], [`async-imap`], and [Delta Chat].
@@ -219,13 +219,11 @@ Thanks to the [NLnet Foundation](https://nlnet.nl/) for supporting imap-codec th
     <img height="100px" src="https://user-images.githubusercontent.com/8997731/215262235-0db02da9-7c6c-498e-a3d2-7ea7901637bf.png"/>
 </div>
 
-[rock-solid]: https://github.com/duesee/imap-codec/tree/main/imap-codec/fuzz
 [well-documented]: https://docs.rs/imap-codec/latest/imap_codec/
 [Matrix]: https://matrix.to/#/#imap-codec:matrix.org
 [IMAP4rev1]: https://tools.ietf.org/html/rfc3501
 [formal syntax]: https://tools.ietf.org/html/rfc3501#section-9
 [extensions]: https://docs.rs/imap-codec/latest/imap_codec/#features
-[cargo fuzz]: https://github.com/rust-fuzz/cargo-fuzz
 [`imap-codec`]: imap-codec
 [`imap-types`]: imap-types
 [`imap-next`]: https://github.com/duesee/imap-next

@@ -16,9 +16,6 @@ exclude = [
 [features]
 default = ["quirk"]
 
-# Expose internal parsers for fuzzing
-fuzz = []
-
 # IMAP quirks
 #
 # These features bypass interoperability issues to allow safe processing of *almost* correct message.

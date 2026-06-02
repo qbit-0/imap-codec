@@ -2,9 +2,7 @@
 resolver = "2"
 members = [
     "imap-codec",
-    "imap-codec/fuzz",
     "imap-types",
-    "imap-types/fuzz",
 ]
 
 [workspace.package]

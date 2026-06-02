@@ -137,9 +137,7 @@
 //! | serde            | Derive `serde`s `Serialize` and `Deserialize` implementations | No                 |
 //! | tag_generator    | Provide a generator for randomized `Tag`s                     | No                 |
 //!
-//! When using `arbitrary`, all types defined in imap-types implement the [Arbitrary] trait to ease testing.
-//! This is used, for example, to generate instances during fuzz-testing.
-//! (See, e.g., `imap-types/fuzz/fuzz_targets/to_static.rs`)
+//! When using `arbitrary`, all types defined in imap-types implement the [Arbitrary] trait to ease property-based testing.
 //! When the `serde` feature is used, all types implement [Serde](https://serde.rs/)'s [Serialize](https://docs.serde.rs/serde/trait.Serialize.html) and
 //! [Deserialize](https://docs.serde.rs/serde/trait.Deserialize.html) traits.
 //! Using `tag_generator` unlocks a `TagGenerator` to generate random tags.

@@ -182,7 +182,7 @@ impl<'a> Arbitrary<'a> for IString<'a> {
                 // When the generated `QuotedUtf8` is also a valid
                 // `Quoted`, we use `Quoted` to avoid the case that
                 // a generated `QuotedUtf8` is reconstructed as `Quoted`
-                // and breaks our structured fuzz tests.
+                // and breaks structured arbitrary round-trip tests.
                 let arb = QuotedUtf8::arbitrary(u)?;
 
                 if Quoted::validate(arb.0.as_ref()).is_ok() {
