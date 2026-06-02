@@ -58,21 +58,21 @@ pub(crate) enum IMAPErrorKind<'a> {
     BadDateTime,
     LiteralContainsNull,
     RecursionLimitExceeded,
-    Nom(#[allow(dead_code)] ErrorKind),
+    Nom,
 }
 
 impl<I> ParseError<I> for IMAPParseError<'_, I> {
-    fn from_error_kind(input: I, kind: ErrorKind) -> Self {
+    fn from_error_kind(input: I, _: ErrorKind) -> Self {
         Self {
             input,
-            kind: IMAPErrorKind::Nom(kind),
+            kind: IMAPErrorKind::Nom,
         }
     }
 
-    fn append(input: I, kind: ErrorKind, _: Self) -> Self {
+    fn append(input: I, _: ErrorKind, _: Self) -> Self {
         Self {
             input,
-            kind: IMAPErrorKind::Nom(kind),
+            kind: IMAPErrorKind::Nom,
         }
     }
 }

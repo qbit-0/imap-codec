@@ -15,7 +15,6 @@ use nom::{
     branch::alt,
     bytes::streaming::{tag, tag_no_case},
     combinator::{map, opt, value},
-    error::ErrorKind,
     multi::separated_list1,
     sequence::{delimited, preceded, separated_pair, tuple},
 };
@@ -87,7 +86,7 @@ pub(crate) fn entry(input: &[u8]) -> IMAPResult<&[u8], Entry> {
     } else {
         Err(nom::Err::Failure(IMAPParseError {
             input,
-            kind: IMAPErrorKind::Nom(ErrorKind::Verify),
+            kind: IMAPErrorKind::Nom,
         }))
     }
 }
